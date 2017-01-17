@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebGL Fireworks: Custom</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="lib/bootstrap.min.css">
+  <link rel="stylesheet" href="lib/rzslider.css"/>
+  <link rel="stylesheet" href="lib/demo.css"/>
+  <link rel="stylesheet" href="lib/main.css">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="custom.js"></script>
+</head>
+<body>
+  <header>
+    <img src="http://www.keiyuasa.com/keiyuasa.com.png"/>
+    <h1>Fireworks on WebGL</h1>
+  </header>
+  <div class="platform">
+    <div class='canvas'>
+      <canvas id='night_sky'></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-selector" ng-app="myApp" ng-controller="fireworksCtrl">
+      <p>
+        <span display="hidden" >{{selected(firworksSelection.model)}}</span>
+      </p>
+      <article>
+        <button class="jscolor {valueElement:'chosen-value', onFineChange:'setFireworksColor(this)'}">
+          Select Color
+        </button>
+        <input id="chosen-value" value="FF8080">
+      </article>
+      <p>
+      Tail Length (1-40): <input class="inputNumber" type="number" min=1 max=40 ng-model="tailLength">
+      <span class="noshow">Tail length {{tail()}}</span>
+      </p>
+      <p>
+      Spark Life (20-600): <input class="inputNumber" type="number" min=20 max=600 ng-model="sparkLife">
+      <span class="noshow">SparkLife {{spark()}}</span>
+      </p><p>
+      Star Gravity (1-400): <input class="inputNumber" type="number" min=1 max=400 ng-model="starGravity">
+      <span class="noshow">Star Gravity {{star_gravity()}}</span>
+      </p><p>
+      Shell Density (2-8): <input class="inputNumber" type="number" min=2 max=8 ng-model="shellDensity">
+      <span class="noshow">SparkLife {{shell_density()}}</span>
+      </p><p>
+      Shell Size (2-8): <input class="inputNumber" type="number" min=2 max=8 ng-model="shellSize">
+      <span class="noshow">SparkLife {{shell_size()}}</span>
+      </p><p>
+      Random Ratio (1-40): <input class="inputNumber" type="number" min=1 max=40 ng-model="randomRatio">
+      <span class="noshow">RandomRatio {{random_ratio()}}</span>
+      </p>
+      <p>
+      Diffuse (2-8): <input class="inputNumber" type="number" min=2 max=8 ng-model="diffuse">
+      <span class="noshow">Diffuse {{diffuse_()}}</span>
+      </p>
+      </div>
+    </div>
+  </div>
+  <footer>
+		<div align="center">
+			<div class="title">Custom Fireworks</div>
+			<form  method="post">
+				<input type="button" id="full_screen_button" value="Enter Full Screen" style="margin-top:20px; margin-bottom:10px;">
+				</input>
+			</form>
+			<div class="links">
+				[ <a href="index_camera_action.html">Camera Action</a>
+        | <a href="index_circular.html">Circle</a>
+				| <a href="index_triple.html">Triple Launcher</a>
+				| <a href="index_single.html">Single Launcher</a>
+				]
+				[ <a href="index_real.html">Real</a>
+				| <a href="index_real_custom.html">Custom </a>
+				]
+				[ <a href="http://www.keiyuasa.com/js/fireworks/">2D fireworks</a>
+				]
+			</div>
+			<div class="counter">
+			<img src="http://www.keiyuasa.com/cgi-sys/Count.cgi?df=keiyuasa.dat|display=Counter|ft=6|md=5|frgb=100;139;216|dd=H">
+			</div>
+			<div>
+			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			</div>
+			<!-- Flat rectangle -->
+			<ins class="adsbygoogle"
+			style="display:inline-block;width:728px;height:90px"
+			data-ad-client="ca-pub-7277914704400175"
+			data-ad-slot="8742335017"></ins>
+			<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+		</div>
+	</footer>
+  <script src="http://wgld.org/j/minMatrixb.js" type="text/javascript"></script>
+  <script src="lib/jquery-1.11.3.min.js" type="text/javascript"></script>
+  <script src="colors.js" type="text/javascript"></script>
+  <script src="sphere.js" type="text/javascript"></script>
+  <script src="Spark.js" type="text/javascript"></script>
+  <script src="Star.js" type="text/javascript"></script>
+  <script src="shell.js" type="text/javascript"></script>
+  <script src="fireworks.js" type="text/javascript"></script>
+  <script src="ground_gear.js" type="text/javascript"></script>
+  <script src="sky.js" type="text/javascript"></script>
+  <script type="text/javascript" src="lib/jscolor.js"></script>
+  <script src="lib/ui-bootstrap-tpls.js"></script>
+  <script src="lib/rzslider.js"></script>
+  <script src="demo.js"></script>
+
+  <script>
+    function setFireworksColor(picker) {
+      setColor1(picker.toString());
+    }
+    setColor1("FF8080");
+
+    function changeDensity(value) {
+      alert("Change Density:"+value);
+    }
+    setGenerators("Custom");
+  </script>
+
+  <script id="vs" type="x-shader/x-vertex">
+  attribute vec3  position;
+  attribute vec4  color;
+  uniform   mat4  mvpMatrix;
+  uniform   float pointSize;
+  varying   vec4  vColor;
+
+  void main(void){
+    vColor       = color;
+    gl_Position  = mvpMatrix * vec4(position, 1.0);
+    gl_PointSize = pointSize;
+  }
+  </script>
+
+  <script id="fs" type="x-shader/x-fragment">
+  precision mediump float;
+
+  varying vec4 vColor;
+
+  void main(void){
+    gl_FragColor = vColor;
+  }
+  </script>
+
+</body>
+</html>
